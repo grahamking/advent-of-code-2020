@@ -38,7 +38,7 @@ fn main() {
     result.push(num_trees(1, 2, &grid));
     println!("{:?}", result);
 
-    let m = result.iter().fold(1, |acc, x| x * acc);
+    let m = result.iter().product::<usize>();
     println!("{}", m);
 }
 

@@ -59,7 +59,7 @@ fn part2(p1: usize, input: &str) -> usize {
 #[cfg(test)]
 mod tests {
 
-    static INPUT: &'static str = r"35
+    static INPUT: &str = r"35
 20
 15
 25

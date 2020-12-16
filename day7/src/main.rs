@@ -13,23 +13,23 @@ fn main() {
 
     // Build the graph
     let f = File::open("input").unwrap();
-    for line in BufReader::new(f).lines().filter_map(|x| x.ok()) {
-        let (name, contents) = parse(&line);
-        if !by_label.contains_key(&name) {
-            let n = g.add_node(name.clone());
-            by_label.insert(name.clone(), n);
-        };
+    for (name, contents) in BufReader::new(f)
+        .lines()
+        .filter_map(|x| x.ok())
+        .map(|x| parse(&x))
+    {
+        let bag = by_label
+            .entry(name.clone())
+            .or_insert_with(|| g.add_node(name.clone()))
+            .clone();
         for (iname, icount) in contents {
             if icount == 0 {
                 continue;
             }
-            if !by_label.contains_key(&iname) {
-                let n = g.add_node(iname.clone());
-                by_label.insert(iname.clone(), n);
-            };
-            let bag = by_label.get(&name).unwrap();
-            let inner = by_label.get(&iname).unwrap();
-            g.add_edge(*bag, *inner, icount);
+            let inner = by_label
+                .entry(iname.clone())
+                .or_insert_with(|| g.add_node(iname.clone()));
+            g.add_edge(bag, *inner, icount);
         }
     }
     //println!("{}", Dot::new(&g));
