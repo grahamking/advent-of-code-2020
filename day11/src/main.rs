@@ -3,35 +3,54 @@ use std::mem::swap;
 
 type Board = Vec<Vec<char>>;
 
+static FLOOR: char = '.';
+static BUSY: char = '#';
+static EMPTY: char = 'L';
+
 fn main() {
     let input = read_to_string("input").unwrap();
     println!("Part 1: {}", part1(&input));
+    println!("Part 2: {}", part2(&input));
 }
 
 fn part1(input: &str) -> usize {
+    part(input, 4, num_adjacent)
+}
+
+fn part2(input: &str) -> usize {
+    part(input, 5, num_visible)
+}
+
+fn part<F>(input: &str, leave: usize, f: F) -> usize
+where
+    F: Fn(&Board, usize, usize) -> usize,
+{
     let mut prev = load(input);
     let mut next = prev.clone();
-    while step(&prev, &mut next) != 0 {
+    while step(&prev, &mut next, leave, &f) != 0 {
         swap(&mut prev, &mut next);
     }
     occupied(&next)
 }
 
 // Returns number of changes
-fn step(prev: &Board, next: &mut Board) -> usize {
+fn step<F>(prev: &Board, next: &mut Board, leave_at: usize, weight_func: F) -> usize
+where
+    F: Fn(&Board, usize, usize) -> usize,
+{
     let mut changes = 0;
     for (i, row) in prev.iter().enumerate() {
         for (j, _) in row.iter().enumerate() {
-            if prev[i][j] == '.' {
+            if prev[i][j] == FLOOR {
                 continue;
             }
-            let na = num_adjacent(&prev, i, j);
+            let na = weight_func(&prev, i, j);
             match na {
                 0 => {
-                    next[i][j] = '#';
+                    next[i][j] = BUSY;
                 }
-                x if x >= 4 => {
-                    next[i][j] = 'L';
+                x if x >= leave_at => {
+                    next[i][j] = EMPTY;
                 }
                 _ => next[i][j] = prev[i][j],
             }
@@ -58,12 +77,52 @@ fn num_adjacent(b: &Board, i: usize, j: usize) -> usize {
             if i == ii && j == jj {
                 continue;
             }
-            if b[ii][jj] == '#' {
+            if b[ii][jj] == BUSY {
                 n += 1;
             }
         }
     }
     n
+}
+
+fn num_visible(b: &Board, i: usize, j: usize) -> usize {
+    let (my, mx) = (b.len() as i32, b[0].len() as i32);
+    look(b, i, j, my, mx, |y: i32, x: i32| (y - 1, x - 1))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y - 1, x))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y - 1, x + 1))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y, x - 1))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y, x + 1))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y + 1, x - 1))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y + 1, x))
+        + look(b, i, j, my, mx, |y: i32, x: i32| (y + 1, x + 1))
+}
+
+// 0 if can't see a busy seat, 1 if can see one
+fn look<F>(b: &Board, i: usize, j: usize, max_y: i32, max_x: i32, peer: F) -> usize
+where
+    F: Fn(i32, i32) -> (i32, i32),
+{
+    let (mut y, mut x) = peer(i as i32, j as i32);
+    if !in_bounds(y, x, max_y, max_x) {
+        return 0;
+    }
+    while b[y as usize][x as usize] == FLOOR {
+        let peered = peer(y, x);
+        y = peered.0;
+        x = peered.1;
+        if !in_bounds(y, x, max_y, max_x) {
+            return 0;
+        }
+    }
+    if b[y as usize][x as usize] == BUSY {
+        1
+    } else {
+        0
+    }
+}
+
+fn in_bounds(a: i32, b: i32, max_a: i32, max_b: i32) -> bool {
+    (0..max_a).contains(&a) && (0..max_b).contains(&b)
 }
 
 fn occupied(b: &Board) -> usize {
@@ -103,5 +162,10 @@ L.LLLLL.LL";
     #[test]
     fn test_part1() {
         assert_eq!(super::part1(INPUT), 37);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(super::part2(INPUT), 26);
     }
 }
