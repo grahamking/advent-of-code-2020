@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::fs::read_to_string;
 
 fn main() {
@@ -20,9 +21,9 @@ struct Point {
 }
 
 impl Point {
-    fn act(&mut self, a: &str) {
-        let mut c = a.chars().next().unwrap();
-        let mut val = a[1..].parse::<i32>().unwrap();
+    fn act(&mut self, a: &str) -> Result<(), Box<dyn Error>> {
+        let mut c = a.chars().next().ok_or("empty input?")?;
+        let mut val = a[1..].parse::<i32>()?;
         if c == 'F' {
             if self.w.is_none() {
                 // part1
@@ -35,10 +36,10 @@ impl Point {
                 }
             } else {
                 // part 2
-                let wp = self.w.as_ref().unwrap();
+                let wp = self.w.as_ref().ok_or("waypoint missing")?;
                 self.pos.x += wp.x * val;
                 self.pos.y += wp.y * val;
-                return;
+                return Ok(());
             }
         }
         if c == 'L' {
@@ -46,9 +47,9 @@ impl Point {
             val = ((val * -1) + 360) % 360;
             c = 'R';
         }
-        // move the shop (part 1) or the waypoint (part 2)
+        // move the ship (part 1) or the waypoint (part 2)
         let mut target = if self.w.is_some() {
-            self.w.as_mut().unwrap()
+            self.w.as_mut().ok_or("waypoint missing 2")?
         } else {
             &mut self.pos
         };
@@ -64,7 +65,7 @@ impl Point {
                     self.pos.a %= 360;
                 } else {
                     // part 2
-                    let wp = self.w.as_mut().unwrap();
+                    let wp = self.w.as_mut().ok_or("TODO COME BACK HERE")?;
                     // TODO: extract a 'translate' function
                     match val {
                         90 => {
@@ -90,6 +91,7 @@ impl Point {
             }
             _ => panic!("Unknown action: {}", c),
         }
+        Ok(())
     }
 
     fn dist(&self) -> i32 {
@@ -102,7 +104,7 @@ fn part1(input: &str) -> i32 {
         pos: Pos { x: 0, y: 0, a: 90 },
         w: None,
     };
-    input.lines().for_each(|x| t.act(x));
+    input.lines().for_each(|x| t.act(x).unwrap());
     t.dist()
 }
 
@@ -111,7 +113,7 @@ fn part2(input: &str) -> i32 {
         pos: Pos { x: 0, y: 0, a: 90 },
         w: Some(Pos { x: 10, y: -1, a: 0 }),
     };
-    input.lines().for_each(|x| t.act(x));
+    input.lines().for_each(|x| t.act(x).unwrap());
     t.dist()
 }
 
