@@ -2,9 +2,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Read, Result};
 
-#[macro_use]
-extern crate lazy_static;
-
+use lazy_static::lazy_static;
 use regex::Regex;
 
 fn main() -> Result<()> {
