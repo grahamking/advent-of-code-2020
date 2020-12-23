@@ -1,7 +1,7 @@
 use std::fs::read_to_string;
 use std::mem::swap;
 
-type Board = Vec<Vec<char>>;
+type Board = [Vec<char>];
 
 static FLOOR: char = '.';
 static BUSY: char = '#';
@@ -98,7 +98,7 @@ fn num_visible(b: &Board, i: usize, j: usize) -> usize {
 }
 
 // 0 if can't see a busy seat, 1 if can see one
-fn look<F>(b: &Board, i: usize, j: usize, max_y: i32, max_x: i32, peer: F) -> usize
+fn look<F>(board: &Board, i: usize, j: usize, max_y: i32, max_x: i32, peer: F) -> usize
 where
     F: Fn(i32, i32) -> (i32, i32),
 {
@@ -106,7 +106,7 @@ where
     if !in_bounds(y, x, max_y, max_x) {
         return 0;
     }
-    while b[y as usize][x as usize] == FLOOR {
+    while board[y as usize][x as usize] == FLOOR {
         let peered = peer(y, x);
         y = peered.0;
         x = peered.1;
@@ -114,7 +114,7 @@ where
             return 0;
         }
     }
-    if b[y as usize][x as usize] == BUSY {
+    if board[y as usize][x as usize] == BUSY {
         1
     } else {
         0
@@ -141,7 +141,7 @@ fn print_board(b: &Board) {
         for c in row {
             print!("{}", c);
         }
-        println!("");
+        println!();
     }
 }
 

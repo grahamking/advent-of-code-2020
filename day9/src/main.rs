@@ -9,14 +9,12 @@ fn main() {
 
 fn part1(plen: usize, input: &str) -> usize {
     let nums: Vec<usize> = input.lines().map(|x| x.parse().unwrap()).collect();
-    let mut start = 0;
     let mut end = plen;
-    for n in nums.iter().skip(plen) {
+    for (start, n) in nums.iter().skip(plen).enumerate() {
         let valid = sums(&nums[start..end]);
         if !valid.contains(n) {
             return *n;
         }
-        start += 1;
         end += 1;
     }
     panic!("not found");

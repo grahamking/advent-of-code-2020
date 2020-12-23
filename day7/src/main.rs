@@ -18,10 +18,9 @@ fn main() {
         .filter_map(|x| x.ok())
         .map(|x| parse(&x))
     {
-        let bag = by_label
+        let bag = *by_label
             .entry(name.clone())
-            .or_insert_with(|| g.add_node(name.clone()))
-            .clone();
+            .or_insert_with(|| g.add_node(name.clone()));
         for (iname, icount) in contents {
             if icount == 0 {
                 continue;
@@ -66,8 +65,8 @@ fn parse(line: &str) -> (String, Vec<(String, usize)>) {
     let mut parts = line.split("bags contain");
     let name = parts.next().unwrap().replace(" ", "");
     let mut contents = Vec::new();
-    for inner in parts.next().unwrap().split(",") {
-        let mut inner_parts = inner.trim().split(" ");
+    for inner in parts.next().unwrap().split(',') {
+        let mut inner_parts = inner.trim().split(' ');
         // the unwrap_or(0) covers 'no'
         let count = inner_parts.next().unwrap().parse::<usize>().unwrap_or(0);
         let inner_name = String::from(inner_parts.next().unwrap()) + inner_parts.next().unwrap();

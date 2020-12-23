@@ -147,7 +147,7 @@ enum Cmd {
 
 impl From<String> for Op {
     fn from(s: String) -> Self {
-        let mut parts = s.split(" ");
+        let mut parts = s.split(' ');
         let cmd = parts.next().unwrap();
         let val = parts.next().unwrap().parse::<i32>().unwrap();
         let visited = false;

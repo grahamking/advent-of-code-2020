@@ -40,9 +40,9 @@ fn part2(input: &str) -> usize {
 
 fn load(input: &str) -> Vec<i32> {
     let mut adaptors: Vec<i32> = input.lines().map(|x| x.parse().unwrap()).collect();
-    adaptors.sort();
+    adaptors.sort_unstable();
     adaptors.push(adaptors[adaptors.len() - 1] + 3); // device joltage
-    return adaptors;
+    adaptors
 }
 
 #[cfg(test)]

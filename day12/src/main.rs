@@ -44,7 +44,7 @@ impl Point {
         }
         if c == 'L' {
             // convert left rotate into right
-            val = ((val * -1) + 360) % 360;
+            val = (-val + 360) % 360;
             c = 'R';
         }
         // move the ship (part 1) or the waypoint (part 2)
@@ -71,7 +71,7 @@ impl Point {
                         90 => {
                             // a,b -> -b, a
                             let temp = wp.x;
-                            wp.x = -1 * wp.y;
+                            wp.x = -wp.y;
                             wp.y = temp;
                         }
                         180 => {
@@ -83,7 +83,7 @@ impl Point {
                             // a,b -> b,-a
                             let temp = wp.x;
                             wp.x = wp.y;
-                            wp.y = -1 * temp;
+                            wp.y = -temp;
                         }
                         _ => panic!("wrong angle {}", val),
                     }

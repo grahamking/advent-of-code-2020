@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .filter_map(|x| x.ok())
         .map(|x| parse(&x).2)
         .collect();
-    seat_ids.sort();
+    seat_ids.sort_unstable();
 
     let mut iter = seat_ids.iter();
     let mut prev = iter.next().unwrap();

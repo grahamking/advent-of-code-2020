@@ -1,12 +1,13 @@
+use std::cmp::Ordering;
 use std::fs;
 
 fn main() {
-    let mut input = fs::read_to_string("input.txt")
+    let mut input: Vec<i32> = fs::read_to_string("input.txt")
         .unwrap()
         .lines()
         .map(|x| x.parse().unwrap())
-        .collect::<Vec<i32>>();
-    input.sort();
+        .collect();
+    input.sort_unstable();
     let l = input.len();
 
     for (i, val1) in input.iter().enumerate() {
@@ -16,10 +17,10 @@ fn main() {
             for k in j + 1..l {
                 let val3 = input.get(k).unwrap();
                 let sum = val1 + val2 + val3;
-                if sum < 2020 {
-                    continue;
-                } else if sum > 2020 {
-                    continue 'outer;
+                match sum.cmp(&2020) {
+                    Ordering::Less => continue,
+                    Ordering::Greater => continue 'outer,
+                    _ => {}
                 }
                 println!(
                     "ANSWER: {} {} {} = {}",

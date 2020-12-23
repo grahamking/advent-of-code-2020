@@ -5,7 +5,7 @@ use std::fs::read_to_string;
 fn main() -> Result<(), Box<dyn Error>> {
     let input = read_to_string("input")?;
     println!("Part 1: {}", part1(&input)?);
-    let second_line = input.lines().skip(1).next().ok_or("missing second")?;
+    let second_line = input.lines().nth(1).ok_or("missing second")?;
     println!("Part 2: {}", part2(&second_line)?);
     Ok(())
 }
@@ -16,7 +16,7 @@ fn part1(input: &str) -> Result<usize, Box<dyn Error>> {
     let schedule: Vec<usize> = l
         .next()
         .ok_or("missing second line")?
-        .split(",")
+        .split(',')
         .filter_map(|x| x.parse().ok()) // skip the 'x'
         .collect();
 

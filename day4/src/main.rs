@@ -11,7 +11,7 @@ struct Cred<'a, F: Fn(&str) -> bool> {
 impl<'a, F: Fn(&str) -> bool> Cred<'a, F> {
     fn add_fields(&mut self, l: &'a str) {
         for entry in l.split_whitespace() {
-            let parts = entry.split(":").collect::<Vec<&'a str>>();
+            let parts: Vec<&'a str> = entry.split(':').collect();
             self.m.insert(parts[0], parts[1]);
         }
     }
@@ -32,21 +32,21 @@ impl<'a, F: Fn(&str) -> bool> Cred<'a, F> {
 }
 
 fn in_years(after: usize, before: usize) -> Box<dyn Fn(&str) -> bool> {
-    return Box::new(move |x: &str| -> bool {
+    Box::new(move |x: &str| -> bool {
         let y = x.parse::<usize>().unwrap_or(0);
         after <= y && y <= before
-    });
+    })
 }
 
 fn matches(re: &str) -> Box<dyn Fn(&str) -> bool> {
     let full_re = String::from("^") + re + "$";
     let r = Regex::new(&full_re).unwrap();
-    return Box::new(move |x: &str| -> bool { r.is_match(x) });
+    Box::new(move |x: &str| -> bool { r.is_match(x) })
 }
 
 fn height() -> Box<dyn Fn(&str) -> bool> {
     let r = Regex::new(r"^(\d{2,3})(cm|in)$").unwrap();
-    return Box::new(move |x: &str| -> bool {
+    Box::new(move |x: &str| -> bool {
         let cap = match r.captures(x) {
             Some(c) => c,
             None => return false,
@@ -54,12 +54,12 @@ fn height() -> Box<dyn Fn(&str) -> bool> {
         let val = cap.get(1).unwrap().as_str().parse::<usize>().unwrap_or(0);
         let unit = cap.get(2).unwrap().as_str();
         if unit == "cm" {
-            return 150 <= val && val <= 193;
+            150 <= val && val <= 193
         } else {
             //regexp ensures it's one or the other
-            return 59 <= val && val <= 76;
+            59 <= val && val <= 76
         }
-    });
+    })
 }
 
 fn main() {
@@ -79,7 +79,7 @@ fn main() {
     };
     let input = fs::read_to_string("input.txt").unwrap();
     for l in input.lines() {
-        if l.trim().len() == 0 {
+        if l.trim().is_empty() {
             if cred.is_valid() {
                 num_valid += 1;
             }

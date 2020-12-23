@@ -10,7 +10,7 @@ fn main() {
     let mut all = HashSet::new();
     let mut first_of_group = true;
     for line in read_to_string("input.txt").unwrap().lines() {
-        if line.len() == 0 {
+        if line.is_empty() {
             groups.push(all);
             all = HashSet::new();
             first_of_group = true;
@@ -30,8 +30,5 @@ fn main() {
         }
     }
     groups.push(all);
-    println!(
-        "{}",
-        groups.iter().map(|x| x.len()).fold(0, |acc, x| acc + x)
-    );
+    println!("{}", groups.iter().map(|x| x.len()).sum::<usize>());
 }

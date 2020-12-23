@@ -24,8 +24,8 @@ impl<'a> Policy<'a> {
 impl<'a> From<&'a str> for Policy<'a> {
     fn from(s: &'a str) -> Self {
         // s is e.g. "1-3 a: abcde"
-        let parts = s.split(" ").collect::<Vec<&str>>();
-        let mut min_max = parts[0].split("-").map(|x| x.parse().unwrap());
+        let parts = s.split(' ').collect::<Vec<&str>>();
+        let mut min_max = parts[0].split('-').map(|x| x.parse().unwrap());
         Policy {
             raw: s,
             first: min_max.next().unwrap(),

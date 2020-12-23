@@ -14,7 +14,7 @@ impl fmt::Display for Grid {
                 }
                 write!(f, "{}", c)?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }

@@ -56,7 +56,7 @@ struct Mask {
 }
 impl From<&str> for Mask {
     fn from(s: &str) -> Mask {
-        let v = String::from(s.split("=").nth(1).unwrap().trim());
+        let v = String::from(s.split('=').nth(1).unwrap().trim());
         let ones: u64 = u64::from_str_radix(&v.replace("X", "0"), 2).unwrap();
         let mut zeros: u64 = u64::from_str_radix(&v.replace("X", "1"), 2).unwrap();
         zeros |= 2u64.pow(63) - 2u64.pow(35); // extend with ones
