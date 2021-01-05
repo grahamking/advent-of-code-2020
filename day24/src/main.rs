@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::error::Error;
 use std::fs::read_to_string;
 
@@ -10,66 +10,63 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn part1(input: &str) -> Result<usize, Box<dyn Error>> {
-    let mut moves = HashMap::new();
-    moves.insert("e", (1, 0));
-    moves.insert("se", (0, 1));
-    moves.insert("sw", (-1, 1));
-    moves.insert("w", (-1, 0));
-    moves.insert("nw", (0, -1));
-    moves.insert("ne", (1, -1));
-
     let mut flipped = HashSet::new();
     for line in input.lines() {
-        let mut pos = (0, 0);
-        for m in StepIter::new(line) {
-            let (x, y) = moves.get(m).ok_or_else(|| format!("missing move {}", m))?;
-            pos.0 += x;
-            pos.1 += y;
-        }
-        if flipped.contains(&pos) {
-            flipped.remove(&pos);
-        } else {
+        let pos = StepIter::new(line).fold((0, 0), |(acc_x, acc_y), (x, y)| (acc_x + x, acc_y + y));
+        if !flipped.remove(&pos) {
             flipped.insert(pos);
         }
     }
     Ok(flipped.len())
 }
 
+type Move = (i8, i8);
+
+// This is the clever part, it maps a hex layout into a 2D grid. I did not invent it.
+static MOVES: [Move; 6] = [
+    (1, 0),  // e
+    (0, 1),  // se
+    (-1, 1), // sw
+    (-1, 0), // w
+    (0, -1), // nw
+    (1, -1), // ne
+];
+
 struct StepIter<'a> {
-    chars: std::str::Chars<'a>,
+    chars: Box<dyn Iterator<Item = char> + 'a>,
 }
 
 impl<'a> Iterator for StepIter<'a> {
-    type Item = &'static str;
+    type Item = Move;
 
     fn next(&mut self) -> Option<Self::Item> {
         let c = match self.chars.next() {
             Some(c) => c,
             None => return None,
         };
-        let out = match c {
-            'e' => "e",
-            'w' => "w",
+        let idx = match c {
+            'e' => 0,
             's' => match self.chars.next().unwrap() {
-                'e' => "se",
-                'w' => "sw",
+                'e' => 1,
+                'w' => 2,
                 x => panic!("unknown move {}{}", c, x),
             },
+            'w' => 3,
             'n' => match self.chars.next().unwrap() {
-                'e' => "ne",
-                'w' => "nw",
+                'w' => 4,
+                'e' => 5,
                 x => panic!("unknown move {}{}", c, x),
             },
             _ => panic!("unknown move {}", c),
         };
-        Some(out)
+        Some(MOVES[idx])
     }
 }
 
 impl<'a> StepIter<'a> {
     fn new(line: &str) -> StepIter {
         StepIter {
-            chars: line.chars(),
+            chars: Box::new(line.chars()),
         }
     }
 }
