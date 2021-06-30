@@ -1,6 +1,6 @@
 // Advent of Code 2020: Day 17
 
-use std::collections::HashSet;
+use ahash::AHashSet;
 
 static INPUT: &str = r"
 .##...#.
@@ -22,14 +22,15 @@ fn part(input: &str, dim: i32) -> usize {
     for _ in 0..6 {
         b.advance();
     }
+
     b.num_active()
 }
 
 #[derive(Debug)]
 struct Board {
     dim: i32,
-    active: HashSet<[i32; 4]>,
-    next: HashSet<[i32; 4]>,
+    active: AHashSet<[i32; 4]>,
+    next: AHashSet<[i32; 4]>,
 }
 
 impl Board {
@@ -39,7 +40,7 @@ impl Board {
         } else {
             input.lines().collect()
         };
-        let mut active = HashSet::new();
+        let mut active = AHashSet::new();
         let z: i32 = 0;
         let w: i32 = 0;
         for (y, l) in data.iter().enumerate() {
@@ -52,7 +53,7 @@ impl Board {
         Board {
             active,
             dim,
-            next: HashSet::new(),
+            next: AHashSet::new(),
         }
     }
 

@@ -46,7 +46,7 @@ impl Menu {
                 let a = by_allergen.entry(a_name).or_insert(e.ingredients.clone());
                 *a = a
                     .intersection(&e.ingredients)
-                    .map(|x| x.to_string())
+                    .map(String::to_string)
                     .collect();
             }
         }
@@ -56,7 +56,7 @@ impl Menu {
 
         let mut baf = HashMap::new(); // by_allergen_final
         let mut singles = HashSet::new();
-        let keys: Vec<String> = by_allergen.keys().map(|s| s.to_string()).collect();
+        let keys: Vec<String> = by_allergen.keys().map(String::to_string).collect();
         loop {
             let mut keep_going = false;
             for k in keys.iter() {
@@ -67,7 +67,7 @@ impl Menu {
                     baf.insert(k.to_string(), s.to_string());
                 } else {
                     let v = by_allergen.entry(k.to_string()).or_default();
-                    *v = v.difference(&singles).map(|s| s.to_string()).collect();
+                    *v = v.difference(&singles).map(String::to_string).collect();
                     keep_going = true;
                 }
             }

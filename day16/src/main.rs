@@ -137,6 +137,6 @@ nearby tickets:
 
     #[test]
     fn test_part1() {
-        assert_eq!(super::part1(INPUT.lines().map(|s| String::from(s))), 71);
+        assert_eq!(super::part1(INPUT.lines().map(String::from)), 71);
     }
 }
