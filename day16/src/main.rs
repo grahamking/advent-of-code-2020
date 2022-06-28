@@ -71,7 +71,6 @@ impl RuleSet {
 
 #[derive(Debug)]
 struct Rule {
-    name: String,
     r1: RangeInclusive<usize>,
     r2: RangeInclusive<usize>,
 }
@@ -98,7 +97,7 @@ impl From<&str> for Rule {
             .filter_map(|x| x.parse().ok())
             .collect();
         Rule {
-            name: cap.get(1).unwrap().as_str().into(),
+            //name: cap.get(1).unwrap().as_str().into(),
             r1: r1p[0]..=r1p[1],
             r2: r2p[0]..=r2p[1],
         }
